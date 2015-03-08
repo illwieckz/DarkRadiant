@@ -583,7 +583,7 @@ void OpenGLShader::appendBlendLayer(const ShaderLayerPtr& layer)
     // Polygon offset
     state.polygonOffset = _material->getPolygonOffset();
 
-#if 0
+#if 1
     if (!layer->getVertexProgram().empty() || !layer->getFragmentProgram().empty())
     {
         try

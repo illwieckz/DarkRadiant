@@ -37,7 +37,8 @@ void GLSLBumpProgram::create()
     rConsole() << "[renderer] Creating GLSL bump program" << std::endl;
 
     _programObj = GLProgramFactory::createGLSLProgram(
-        BUMP_VP_FILENAME, BUMP_FP_FILENAME
+        BUMP_VP_FILENAME, BUMP_FP_FILENAME,
+        GLProgramFactory::ProgramType::BuiltIn
     );
 
     // Bind vertex attribute locations and link the program

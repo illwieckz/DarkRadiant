@@ -14,7 +14,12 @@ namespace render
 class GenericVFPProgram : 
     public GLProgram
 {
+private:
+    std::string _vertexProgramFilename;
+    std::string _fragmentProgramFilename;
+
     // openGL Vertex and fragment program identifiers
+    GLuint _program;
     GLuint _vertexProgram;
     GLuint _fragmentProgram;
 

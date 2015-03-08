@@ -7,9 +7,12 @@
 #include "glprogram/GenericVFPProgram.h"
 
 #include "iregistry.h"
+#include "iarchive.h"
+#include "ifilesystem.h"
 #include "imodule.h"
 #include "os/file.h"
 #include "string/convert.h"
+#include "stream/ScopedArchiveBuffer.h"
 #include "debugging/debugging.h"
 
 #include <fstream>
@@ -78,6 +81,12 @@ void GLProgramFactory::realise()
 	{
 		pair.second->create();
 	}
+
+    // Realise each GLProgram in the map
+	for (GameProgramMap::value_type& pair : _gamePrograms)
+	{
+		pair.second->create();
+	}
 }
 
 // Unrealise the program factory.
@@ -88,36 +97,37 @@ void GLProgramFactory::unrealise()
 	{
 		pair.second->destroy();
 	}
+
+    for (GameProgramMap::value_type& pair : _gamePrograms)
+	{
+		pair.second->destroy();
+	}
 }
 
 // Get file as a char buffer
-GLProgramFactory::CharBufPtr
-GLProgramFactory::getFileAsBuffer(const std::string& filename,
-                                  bool nullTerminated)
+GLProgramFactory::CharBufPtr GLProgramFactory::getFileAsBuffer(
+    const std::string& filename, ProgramType programType, bool nullTerminated)
 {
-    // Get absolute path from filename
-    std::string absFileName = getBuiltInGLProgramPath(filename);
+    // Load from VFS or from absolute path, depending on the program type
+    ArchiveFilePtr file = programType == ProgramType::BuiltIn ?
+        GlobalFileSystem().openFileInAbsolutePath(getBuiltInGLProgramPath(filename)) :
+        GlobalFileSystem().openFile(getGameGLProgramPath(filename));
 
-    // Open the file
-	std::size_t size = file_size(absFileName.c_str());
-	std::ifstream file(absFileName.c_str());
-
-    // Throw an exception if the file could not be found
-	if (!file.is_open())
+    if (!file)
     {
         throw std::runtime_error(
             "GLProgramFactory::createARBProgram() failed to open file: "
-            + absFileName
+            + filename
         );
     }
 
     // Read the file data into a buffer, adding a NULL terminator if required
-    std::size_t bufSize = (nullTerminated ? size + 1 : size);
-	CharBufPtr buffer(new std::vector<char>(bufSize, 0));
-	file.read(&buffer->front(), size);
+    std::size_t bufSize = nullTerminated ? file->size() + 1 : file->size();
 
-    // Close file and return buffer
-    file.close();
+	CharBufPtr buffer(new std::vector<char>(bufSize, 0));
+    std::size_t length = file->getInputStream().read(
+        reinterpret_cast<StreamBase::byte_type*>(&buffer->front()), file->size());
+
     return buffer;
 }
 
@@ -194,7 +204,8 @@ void GLProgramFactory::assertProgramLinked(GLuint program)
 }
 
 GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
-                                           const std::string& fFile)
+                                           const std::string& fFile,
+                                           ProgramType programType)
 {
     // Create the parent program object
     GLuint program = glCreateProgram();
@@ -205,8 +216,8 @@ GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
 
     // Load the source files as NULL-terminated strings and pass the text to
     // OpenGL
-    CharBufPtr vertexSrc = getFileAsBuffer(vFile, true);
-    CharBufPtr fragSrc = getFileAsBuffer(fFile, true);
+    CharBufPtr vertexSrc = getFileAsBuffer(vFile, programType, true);
+    CharBufPtr fragSrc = getFileAsBuffer(fFile, programType, true);
 
     const char* csVertex = &vertexSrc->front();
     const char* csFragment = &fragSrc->front();
@@ -242,7 +253,7 @@ GLuint GLProgramFactory::createARBProgram(const std::string& filename,
                                           GLenum type)
 {
     // Get the file contents without NULL terminator
-    CharBufPtr buffer = getFileAsBuffer(filename, false);
+    CharBufPtr buffer = getFileAsBuffer(filename, ProgramType::BuiltIn, false);
 
     // Bind the program data into OpenGL
     GlobalOpenGL().assertNoErrors();
@@ -285,6 +296,11 @@ std::string GLProgramFactory::getBuiltInGLProgramPath(const std::string& progNam
             .getApplicationContext()
                 .getRuntimeDataPath()
                     + "gl/" + progName;
+}
+
+std::string GLProgramFactory::getGameGLProgramPath(const std::string& progName)
+{
+    return "glprogs/" + progName; // TODO: move to game
 }
 
 } // namespace render

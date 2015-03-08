@@ -17,7 +17,8 @@ void GLSLDepthFillProgram::create()
     rConsole() << "[renderer] Creating GLSL depthfill program" << std::endl;
 
     _programObj = GLProgramFactory::createGLSLProgram(
-        DEPTHFILL_VP_FILENAME, DEPTHFILL_FP_FILENAME
+        DEPTHFILL_VP_FILENAME, DEPTHFILL_FP_FILENAME, 
+        GLProgramFactory::ProgramType::BuiltIn
     );
 
     GlobalOpenGL().assertNoErrors();

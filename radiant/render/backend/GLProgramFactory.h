@@ -29,17 +29,27 @@ class GLProgramFactory
     // Using GLSL flag
     bool _usingGLSL;
 
+public:
+    // GL programs can be loaded from DarkRadiant's gl/ folder or from the game's resources.
+    enum class ProgramType
+    {
+        BuiltIn,
+        GameSpecific,
+    };
+
 private:
     /*
      * Convenience method to return the full path of a given GL program file on
      * disk, taking account of platform-dependent differences.
      */
     static std::string getBuiltInGLProgramPath(const std::string& progName);
+    static std::string getGameGLProgramPath(const std::string& progName);
 
     // Get a vector of chars containing file contents, with optional
     // NULL-termination
     typedef std::shared_ptr<std::vector<char> > CharBufPtr;
     static CharBufPtr getFileAsBuffer(const std::string& filename,
+                                      ProgramType programType,
                                       bool nullTerminated);
 
     // Get the program info log as a string
@@ -100,7 +110,8 @@ public:
      * any necessary attributes and then call glLinkProgram() to finalise the
      * link.
      */
-    static GLuint createGLSLProgram(const std::string& vFile, const std::string& fFile);
+    static GLuint createGLSLProgram(const std::string& vFile, const std::string& fFile,
+                                    ProgramType programType);
 
 	/**
      * Create a GL Program from the contents of a file.

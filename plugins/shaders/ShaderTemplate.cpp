@@ -1130,7 +1130,9 @@ bool ShaderTemplate::parseCondition(parser::DefTokeniser& tokeniser, const std::
 bool ShaderTemplate::saveLayer()
 {
     // Append layer to list of all layers
-    if (_currentLayer->getBindableTexture())
+    if (_currentLayer->getBindableTexture() || 
+        !_currentLayer->getVertexProgram().empty() ||
+        !_currentLayer->getFragmentProgram().empty())
     {
 		addLayer(_currentLayer);
     }
@@ -1154,6 +1156,11 @@ void ShaderTemplate::parseDefinition()
     );
 
     _parsed = true; // we're parsed from now on
+
+    if (getName() == "textures/water_source/water_blurred")
+    {
+        int i = 6;
+    }
 
     try
     {
