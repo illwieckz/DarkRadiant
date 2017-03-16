@@ -19,8 +19,8 @@
   shaders="quake3"
   entityclass="quake3"
   entities="quake3"
-  brushtypes="doom3"
-  patchtypes="doom3"
+  brushtypes="quake3"
+  patchtypes="quake3"
   registryKey="SOFTWARE\id\Doom 3"
   registryValue="InstallPath"
 >
