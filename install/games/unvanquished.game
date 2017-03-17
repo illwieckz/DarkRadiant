@@ -15,7 +15,7 @@
   unknowngamename="Custom Unvanquished modification"
   archivetypes="pk3"
   modeltypes="lwo ase md5mesh md3"
-  maptypes="mapquake3"
+  maptypes="mapdoom3"
   shaders="quake3"
   entityclass="quake3"
   entities="quake3"
@@ -54,16 +54,6 @@
 				match="textures/common/caulk"
 				action="hide" />
 		</filter>
-		<filter name="Collision surfaces">
-			<filterCriterion
-				type="texture"
-				match="textures/common/collision"
-				action="hide" />
-			<filterCriterion
-				type="texture"
-				match="tdm_collision_.*"
-				action="hide" />
-		</filter>
 		<filter name="Lights">
 			<filterCriterion type="entityclass" match="light" action="hide" />
 			<filterCriterion type="entityclass" match="light_.*" action="hide" />
@@ -75,19 +65,20 @@
 		<filter name="Areaportals (Q3A style)">
 			<filterCriterion type="texture" match="textures/common/areaportal" action="hide" />
 		</filter>
-		<filter name="Visportals (Doom 3 style)">
-			<filterCriterion type="texture" match="textures/editor/visportal" action="hide" />
-		</filter>
 		<filter name="Decals">
 			<filterCriterion type="texture" match="textures(.*)decals(.*)" action="hide" />
+		</filter>
+		<filter name="Common Textures">
+			<filterCriterion 
+				type="texture" 
+				match="textures/common/(.*)" 
+				action="hide" />
 		</filter>
 		<filter name="Clip Textures">
 			<filterCriterion
 				type="texture"
-				match="textures/common/(.*)_clip$"
+				match="textures/common/(.*)clip$"
 				action="hide" />
-			<filterCriterion type="texture" match="textures/common/clip(_plusmovables)*$" action="hide" />
-			<filterCriterion type="texture" match="textures/common/moveableclipmodel" action="hide" />
 		</filter>
 		<filter name="Hint Textures">
 			<filterCriterion 
@@ -95,10 +86,16 @@
 				match="textures/common/hint(.*)" 
 				action="hide" />
 		</filter>
-		<filter name="Trigger Textures">
+		<filter name="Ladder Textures">
 			<filterCriterion
 				type="texture"
-				match="textures/common/trig(.*)"
+				match="textures/common/ladder(.*)"
+				action="hide" />
+		</filter>
+		<filter name="Nobuild Textures">
+			<filterCriterion
+				type="texture"
+				match="textures/common/no(.*)build"
 				action="hide" />
 		</filter>
 		<filter name="Nodraw Textures">
@@ -107,10 +104,22 @@
 				match="textures/common/nodraw(.*)"
 				action="hide" />
 		</filter>
-		<filter name="Shadow Textures">
+		<filter name="Slick Textures">
 			<filterCriterion
 				type="texture"
-				match="textures/common/shadow(.*)"
+				match="textures/common/slick(.*)"
+				action="hide" />
+		</filter>
+		<filter name="Terrain Textures">
+			<filterCriterion
+				type="texture"
+				match="textures/common/terrain(.*)"
+				action="hide" />
+		</filter>
+		<filter name="Trigger Textures">
+			<filterCriterion
+				type="texture"
+				match="textures/common/trigger(.*)"
 				action="hide" />
 		</filter>
 		<filter name="Patches">
@@ -118,12 +127,6 @@
 		</filter>
 		<filter name="Brushes">
 			<filterCriterion type="object" match="brush" action="hide" />
-		</filter>
-		<filter name="Weather Textures">
-			<filterCriterion type="texture" match="textures/darkmod/weather/.*"	action="hide" />
-		</filter>
-		<filter name="Paths">
-			<filterCriterion type="entityclass" match="path_.*" action="hide" />
 		</filter>
 	</filtersystem>
 	<filesystem>
@@ -145,7 +148,7 @@
 		<defaultTexture value="_default" />
 		<collisionTexture value="textures/common/collision" />
 		<monsterClipShader value="textures/common/monster_clip" />
-		<visportalShader value="textures/editor/visportal" />
+		<visportalShader value="textures/common/areaportal" />
 		<nodrawShader value="textures/common/nodraw" />
 		<collisionModelExt value="cm" />
 		<defaultCurveEntity value="func_static" />
